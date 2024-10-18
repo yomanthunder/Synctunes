@@ -1,0 +1,10 @@
+[package]
+name = "De_Sync"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4"
+actix-ws = "0.3.0"
+serde = "1.0.210"
+tokio = "1.40.0"
