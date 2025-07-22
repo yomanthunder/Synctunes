@@ -1,34 +1,18 @@
-mod api;
+use axum::{response::Html, routing::get, Router};
 
-use api::task::{hello_bro};
+#[tokio::main]
+async fn main() {
+    // build our application with a route
+    let app = Router::new().route("/", get(handler));
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+    // run it
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+        .await
+        .unwrap();
+    println!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, app).await.unwrap();
 }
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    // this is a closure , it sets up as soon as a new thread comes into picture
-    hello_bro();
-    println!("ggs bro");
-    HttpServer::new(|| {
-        App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+async fn handler() -> Html<&'static str> {
+    Html("<h1>Hello, orld!</h1>")
 }
